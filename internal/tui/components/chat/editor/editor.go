@@ -416,13 +416,14 @@ func (m *editorCmp) View() string {
 	} else {
 		m.textarea.Placeholder = m.readyPlaceholder
 	}
+	editorStyle := t.S().Base.Background(t.BgSubtle).Foreground(t.White)
 	if len(m.attachments) == 0 {
-		content := t.S().Base.Padding(1).Render(
+		content := editorStyle.Padding(1).Render(
 			m.textarea.View(),
 		)
 		return content
 	}
-	content := t.S().Base.Padding(0, 1, 1, 1).Render(
+	content := editorStyle.Padding(0, 1, 1, 1).Render(
 		lipgloss.JoinVertical(lipgloss.Top,
 			m.attachmentsContent(),
 			m.textarea.View(),
@@ -535,13 +536,12 @@ func New(app *app.App) Editor {
 	ta.SetStyles(t.S().TextArea)
 	ta.SetPromptFunc(4, func(info textarea.PromptInfo) string {
 		if info.LineNumber == 0 {
-			return "  > "
+			return t.S().Base.Bold(true).Foreground(t.White).Render("  > ")
 		}
 		if info.Focused {
-			return t.S().Base.Foreground(t.GreenDark).Render("::: ")
-		} else {
-			return t.S().Muted.Render("::: ")
+			return t.S().Base.Bold(true).Foreground(t.White).Render("::: ")
 		}
+		return t.S().Base.Foreground(t.FgBase).Render("::: ")
 	})
 	ta.ShowLineNumbers = false
 	ta.CharLimit = -1
